@@ -1,0 +1,52 @@
+# bolt.diy gateway: the only public entry. bolt.diy has no sign-in, and its server
+# spends the LLM keys set on Railway for whoever opens the page, so everything
+# behind it is protected with HTTP basic auth.
+#
+#   https://{domain}/_gateway/health  -> this proxy (Railway healthcheck)
+#   https://{domain}/*                -> basic auth -> bolt :5173
+{
+	admin off
+	persist_config off
+	auto_https off
+	servers {
+		# Railway's edge terminates TLS and forwards X-Forwarded-* headers.
+		trusted_proxies static private_ranges 100.0.0.0/8
+	}
+}
+
+:{$PORT:8080} {
+	handle /_gateway/health {
+		respond "ok" 200
+	}
+
+	# Browsers send cached basic-auth credentials on cross-site requests and
+	# WebSockets too; only this site's own pages may call it.
+	@cross_site {
+		header Origin *
+		not header Origin https://{host}
+	}
+	handle @cross_site {
+		respond "Cross-origin request refused" 403
+	}
+
+	handle {
+		basic_auth {
+			{$BASIC_AUTH_USERNAME} {$BASIC_AUTH_HASH}
+		}
+		request_header -Authorization
+		header -Server
+		header X-Robots-Tag "noindex, nofollow"
+		reverse_proxy {$BOLT_UPSTREAM} {
+			# Vite's preview server only answers known hosts (localhost, IPs);
+			# the public host still reaches the app as X-Forwarded-Host.
+			header_up Host localhost
+			flush_interval -1
+			lb_try_duration 30s
+			transport http {
+				read_timeout 10m
+				write_timeout 10m
+			}
+			lb_try_interval 1s
+		}
+	}
+}

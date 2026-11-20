@@ -1,0 +1,170 @@
+{
+  "name": "bolt.diy v1 AI Web App Builder (Password-Protected)",
+  "description": "Prompt, run and edit full-stack apps in the browser with any LLM.",
+  "category": "AI/ML",
+  "tags": [
+    "bolt.diy",
+    "bolt",
+    "ai-coding",
+    "app-builder",
+    "webcontainers",
+    "llm",
+    "openai",
+    "anthropic",
+    "openrouter",
+    "vibe-coding"
+  ],
+  "image": "https://cdn.jsdelivr.net/gh/stackblitz-labs/bolt.diy@55801025819399b5616056474fb4190df555f128/public/favicon.svg",
+  "upstream": {
+    "bolt.diy": "stackblitz-labs/bolt.diy v1.0.3 (MIT), image ghcr.io/stackblitz-labs/bolt.diy:v1.0.3 pinned by index digest",
+    "caddy": "caddy:2.11.9-alpine@sha256:003a97808e781aa9f7e75cc2f43d34d461099031faf5e20faefb9f61126836f0",
+    "checked": "2026-11-20"
+  },
+  "services": {
+    "bolt.diy": {
+      "icon": "https://cdn.jsdelivr.net/gh/stackblitz-labs/bolt.diy@55801025819399b5616056474fb4190df555f128/public/favicon.svg",
+      "source": {
+        "repo": "baranberkay96/bolt-diy-railway",
+        "rootDirectory": "/services/gateway"
+      },
+      "startCommand": null,
+      "preDeployCommand": null,
+      "healthcheckPath": "/_gateway/health",
+      "healthcheckTimeout": 120,
+      "restartPolicyType": "ALWAYS",
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": true,
+      "targetPort": 8080,
+      "tcpProxy": null,
+      "volume": null,
+      "variables": {
+        "BOLT_USERNAME": {
+          "defaultValue": "bolt",
+          "description": "Sign-in user name (letters, digits, . _ @ -).",
+          "required": true
+        },
+        "BOLT_PASSWORD": {
+          "defaultValue": "${{secret(24, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+          "description": "Sign-in password, generated at deploy. 12-72 characters; anything else locks the site until you fix it.",
+          "required": true
+        },
+        "PORT": {
+          "defaultValue": "8080",
+          "description": "Gateway port (healthcheck and public domain target).",
+          "required": true
+        },
+        "BOLT_UPSTREAM": {
+          "defaultValue": "${{bolt.RAILWAY_PRIVATE_DOMAIN}}:5173",
+          "description": "bolt.diy on the private network.",
+          "required": true
+        }
+      }
+    },
+    "bolt": {
+      "icon": "https://cdn.jsdelivr.net/gh/stackblitz-labs/bolt.diy@55801025819399b5616056474fb4190df555f128/public/favicon.svg",
+      "source": {
+        "image": "ghcr.io/stackblitz-labs/bolt.diy:v1.0.3@sha256:89f1061e2ffad4f51125c6f931f18a4b2aaec2a1010799ea6b9608f399d7c99e"
+      },
+      "startCommand": "pnpm run start",
+      "preDeployCommand": null,
+      "healthcheckPath": "/",
+      "healthcheckTimeout": 600,
+      "restartPolicyType": "ALWAYS",
+      "numReplicas": 1,
+      "cronSchedule": null,
+      "publicDomain": false,
+      "targetPort": null,
+      "tcpProxy": null,
+      "volume": null,
+      "variables": {
+        "PORT": {
+          "defaultValue": "5173",
+          "description": "Vite preview port (fixed by upstream's start script), private only.",
+          "required": true
+        },
+        "NODE_ENV": {
+          "defaultValue": "production",
+          "description": "Production build served by Vite's Cloudflare preview server.",
+          "required": true
+        },
+        "CLOUDFLARE_INCLUDE_PROCESS_ENV": {
+          "defaultValue": "true",
+          "description": "Pass this service's variables (the API keys below) to bolt.diy's server worker.",
+          "required": true
+        },
+        "RUNNING_IN_DOCKER": {
+          "defaultValue": "true",
+          "description": "Upstream's container mode flag.",
+          "required": true
+        },
+        "VITE_LOG_LEVEL": {
+          "defaultValue": "info",
+          "description": "Server log level (debug, info, warn, error).",
+          "required": false
+        },
+        "DEFAULT_NUM_CTX": {
+          "defaultValue": "32768",
+          "description": "Context window bolt.diy asks Ollama models for.",
+          "required": false
+        },
+        "OPENAI_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. OpenAI API key, used for everyone who signs in. Leave empty to enter keys in the UI (stored in your browser).",
+          "required": false
+        },
+        "ANTHROPIC_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. Anthropic API key (Claude).",
+          "required": false
+        },
+        "GOOGLE_GENERATIVE_AI_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. Google Gemini API key.",
+          "required": false
+        },
+        "OPEN_ROUTER_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. OpenRouter API key.",
+          "required": false
+        },
+        "DEEPSEEK_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. DeepSeek API key.",
+          "required": false
+        },
+        "XAI_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. xAI (Grok) API key.",
+          "required": false
+        },
+        "GROQ_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. Groq API key.",
+          "required": false
+        },
+        "MISTRAL_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. Mistral API key.",
+          "required": false
+        },
+        "OLLAMA_API_BASE_URL": {
+          "defaultValue": "",
+          "description": "Optional. Ollama server URL, e.g. http://{ollama-service}.railway.internal:11434.",
+          "required": false
+        },
+        "OPENAI_LIKE_API_BASE_URL": {
+          "defaultValue": "",
+          "description": "Optional. Any OpenAI-compatible endpoint (LiteLLM, vLLM, a gateway).",
+          "required": false
+        },
+        "OPENAI_LIKE_API_KEY": {
+          "defaultValue": "",
+          "description": "Optional. Key for the OpenAI-compatible endpoint.",
+          "required": false
+        }
+      }
+    }
+  },
+  "buckets": []
+}
