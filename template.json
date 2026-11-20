@@ -162,6 +162,11 @@
           "defaultValue": "",
           "description": "Optional. Key for the OpenAI-compatible endpoint.",
           "required": false
+        },
+        "__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS": {
+          "defaultValue": "healthcheck.railway.app",
+          "description": "Vite's preview server answers only known hosts; this lets Railway's healthcheck in (the gateway sends Host: localhost).",
+          "required": true
         }
       }
     }
