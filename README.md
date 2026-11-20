@@ -39,7 +39,7 @@ bolt.diy has no sign-in of its own, and keys set on the server are used for ever
 
 **Security.** The gateway refuses cross-site requests (browsers would otherwise send the cached password with them). An empty, too short or too long password never opens the site: the start log says it is locked and how to fix it.
 
-**Resources.** The gateway uses about 20 MB. The bolt service has no data to keep; its memory use was not measured yet.
+**Resources.** The gateway uses about 20 MB. The bolt service has no data to keep and idles at about 0.65 GB of RAM (measured on Railway), so a project costs roughly $7 a month at idle on Hobby.
 
 **Scaling.** The `bolt` service is stateless; give it more CPU or memory if many people use it at once. Generated projects run in each user's browser, not on Railway.
 
