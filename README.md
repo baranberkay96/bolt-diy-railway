@@ -1,5 +1,7 @@
 # Deploy and Host bolt.diy with Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/boltdiy-v1-ai-web-app-builder-password-p?referralCode=20H68q)
+
 bolt.diy is the open-source version of Bolt.new: describe an app in a prompt and an AI model writes, runs and edits a full-stack web project right in your browser. This community template runs the bolt.diy 1.0 release on Railway behind a password, so only you can use it and the LLM keys you configure.
 
 ## About Hosting bolt.diy
